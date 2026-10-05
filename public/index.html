@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The morning sheet — a working demo by Tasti.io</title>
+<title>The morning sheet · a working demo by Tasti.io</title>
 <meta name="description" content="One page across four locations, built from POS data. The thing a multi-site operator assembles by hand before opening.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,6 +76,28 @@
   .review{padding:13px 20px;background:#FAFAF8;font-size:13px;line-height:20px;color:var(--mid);border-top:1px solid var(--rule)}
   .review b{color:var(--ink)}
   .review ul{margin:5px 0 0 16px}
+  .tabs{display:flex;gap:4px;margin:22px 0 0;border-bottom:1px solid var(--rule)}
+  .tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
+       font:inherit;font-size:14px;font-weight:500;color:var(--faint);padding:9px 14px;cursor:pointer;
+       border-radius:6px 6px 0 0}
+  .tab:hover{color:var(--ink)}
+  .tab.is-on{color:var(--ink);border-bottom-color:var(--teal)}
+  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  [role=tabpanel]{padding-top:4px}
+
+  .aside{margin-top:16px;font-size:13px;color:var(--faint)}
+  .linkish{appearance:none;background:none;border:0;padding:0;margin-left:4px;font:inherit;font-size:13px;
+           color:var(--teal);font-weight:500;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+  .prose{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:26px 30px 30px;margin-top:22px}
+  .prose h2{font-family:'DM Serif Display',Georgia,serif;font-size:21px;font-weight:400;margin:30px 0 9px}
+  .prose h2:first-child{margin-top:0}
+  .prose p{font-size:15px;line-height:25px;color:var(--mid);max-width:68ch;margin-bottom:11px}
+  .prose p b{color:var(--ink)}
+  .prose .cta{margin:4px 0 0}
+  .prose .cta a{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--teal);text-decoration:none;
+                border-bottom:1px solid var(--teal);padding-bottom:1px}
+  @media(max-width:720px){ .prose{padding:20px 18px 24px} .tab{padding:9px 10px} }
   .note{margin-top:20px;background:#FAF8F3;border:1px solid var(--rule);border-radius:9px;
         padding:15px 18px;font-size:13.5px;line-height:21px;color:var(--mid)}
   .note b{color:var(--ink)}
@@ -112,30 +134,115 @@
     </p>
   </div>
 
-  <div class="sheet" id="sheet">
-    <div class="loading">Building the sheet&hellip;</div>
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab is-on" role="tab" id="tab-sheet" aria-controls="panel-sheet" aria-selected="true">The sheet</button>
+    <button class="tab" role="tab" id="tab-how" aria-controls="panel-how" aria-selected="false" tabindex="-1">How it works</button>
   </div>
 
-  <div class="sheet" id="costs">
-    <div class="loading">Reading the invoices&hellip;</div>
+  <div id="panel-sheet" role="tabpanel" aria-labelledby="tab-sheet">
+    <div class="sheet" id="sheet">
+      <div class="loading">Building the sheet&hellip;</div>
+    </div>
+
+    <div class="sheet" id="costs">
+      <div class="loading">Reading the invoices&hellip;</div>
+    </div>
+
+    <p class="aside">
+      The numbers are invented and the group is fictional. The machinery that produces them is not.
+      <button class="linkish" id="go-how">How this works</button>
+    </p>
   </div>
 
-  <div class="note">
-    <b>How the sheet reads.</b> Every line is derived, not typed. A site is flagged when it moved
-    against <b>its own</b> normal for this weekday, not against the group, because comparing a
-    ninety-seat room to a food-hall counter tells you nothing. Labour is flagged on its share of
-    sales. Voids are flagged as a rate, so three voids in a four-hundred-order day stay quiet and
-    three in a forty-order day do not.
-  </div>
+  <div id="panel-how" role="tabpanel" aria-labelledby="tab-how" hidden>
 
-  <div class="note">
-    <b>Where the model is, and where it is not.</b> A model reads each invoice once, when it arrives,
-    and its only job is transcription: supplier, date, description, pack, quantity, line total,
-    exactly as printed. It is never asked to calculate. Every unit price, every percentage and every
-    dollar on this page is ordinary arithmetic over those line items, which is why the lines are
-    added up and checked against the invoice's own stated total before anything is believed. It also
-    means an open page like this one costs nothing to look at: nothing here calls a model when you
-    load it.
+    <div class="prose">
+      <h2>The problem this is about</h2>
+      <p>
+        A point of sale tells you what you sold. It does not know what you paid, because that arrives
+        separately, as PDFs from distributors and paper in a folder. So the one question an owner
+        actually has in the morning, whether yesterday made any money, is the one question no POS
+        dashboard answers.
+      </p>
+      <p>
+        Most multi-location operators fill that gap by hand for a while. Someone opens three portals,
+        copies figures into a spreadsheet, and eyes it. Somewhere around the third location that
+        stops happening, and after it stops, a supplier price can drift for eight months before
+        anybody notices.
+      </p>
+
+      <h2>What the top half does</h2>
+      <p>
+        It pulls yesterday from the point of sale and puts every location on one line. The only
+        judgement it makes is which sites are worth your attention, and it makes that judgement
+        against <b>each site's own normal for that weekday</b>, never against the group. A ninety
+        seat room and a food hall counter have nothing to say about each other. A Sunday has nothing
+        to say about a Tuesday.
+      </p>
+      <p>
+        Labour is flagged on its share of sales. Voids are flagged as a rate, so three voids in a four
+        hundred order day stay quiet and three in a forty order day do not.
+      </p>
+
+      <h2>What the bottom half does</h2>
+      <p>
+        Supplier invoices are forwarded to one address. Each is read once into line items: supplier,
+        date, description, pack size, quantity, line total. Pack sizes are normalised, so one
+        distributor's "5 x 2.5 KG" and another's "CASE 25 LB" become the same price per kilogram and
+        can finally be compared.
+      </p>
+      <p>
+        From there it watches for three things. A price that has moved against what the same item cost
+        six to sixteen weeks ago. The same item bought from two suppliers at two prices in the same
+        month. And an ingredient whose cost has risen while the dish it goes into has not changed
+        price since February.
+      </p>
+
+      <h2>Where the AI is, and where it deliberately is not</h2>
+      <p>
+        A model reads each invoice once, when it arrives, and its only job is transcription: what the
+        page says, as printed. <b>It is never asked to calculate.</b> Every unit price, every
+        percentage and every dollar figure here is ordinary arithmetic over those line items.
+      </p>
+      <p>
+        That boundary is not decoration. It means the product lines can be added up and checked
+        against the invoice's own goods subtotal before anything is believed, so a misread digit
+        surfaces as "this does not reconcile" instead of as a confident sentence about your money. It
+        also means this page calls no model when you open it, so a link like this one costs nothing
+        to look at, however many people do.
+      </p>
+
+      <h2>What it refuses to do</h2>
+      <p>
+        Three kinds of line are held back rather than absorbed: a product no catalog entry covers, a
+        pack size that cannot be read, and an invoice whose lines do not add up to its own subtotal.
+        They are listed for a person instead of being guessed at. A price history that quietly
+        swallowed them would be wrong in a way nobody could see, which is worse than one with gaps
+        you can point at.
+      </p>
+      <p>
+        Nothing is reported unless it is worth about $150 a month or more. A 35% rise on an item you
+        spend $15 a month on is arithmetically true and operationally useless, and a page that prints
+        it is a page that stops being read by the second week.
+      </p>
+
+      <h2>On your own numbers</h2>
+      <p>
+        The fastest way to see whether any of this is real is to test the hard part on something only
+        you have. <b>Forward one supplier invoice</b> to the address below, PDF or a photo of the
+        page, and you will get back your own line items with a price per kilogram beside each, plus
+        whatever did not reconcile. No account, no connection to your POS, no call first.
+      </p>
+      <p class="cta">
+        <a href="mailto:yuriy@tasti.io?subject=One%20invoice">yuriy@tasti.io</a>
+      </p>
+
+      <h2>Who built it</h2>
+      <p>
+        Yuriy Romanyuk, in Vancouver. I ran restaurant operations before I built software for them,
+        which is mostly why this page is one page instead of a dashboard with eleven tabs.
+      </p>
+    </div>
   </div>
 
   <footer>
@@ -290,7 +397,33 @@ function renderCosts(d){
       that quietly absorbed them would be wrong in a way nobody could see.</div>` : ""}`;
 }
 
+/* ---------- tabs ---------- */
+
+/* Two panels, no router and no framework: the tab is a view toggle, not a page.
+   Kept keyboard-operable because a page whose second half is unreachable without
+   a mouse is a page half the readers never see. */
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function showTab(id){
+  for(const t of tabs){
+    const on = t.id === id;
+    t.classList.toggle("is-on", on);
+    t.setAttribute("aria-selected", String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+for(const t of tabs) t.addEventListener("click", () => showTab(t.id));
+document.addEventListener("keydown", (e) => {
+  if(!tabs.includes(document.activeElement)) return;
+  if(e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const next = tabs[(tabs.indexOf(document.activeElement) + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+  next.focus(); showTab(next.id);
+});
+document.getElementById("go-how").addEventListener("click", () => { showTab("tab-how"); document.getElementById("tab-how").focus(); });
+
 /* ---------- load ---------- */
+
 
 const fail = (id, what) => {
   document.getElementById(id).innerHTML =
