@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The morning sheet — a working demo by Tasti.io</title>
+<meta name="description" content="One page across four locations, built from POS data. The thing a multi-site operator assembles by hand before opening.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#1B1A18;--mid:#57534E;--faint:#8A857D;--rule:#E5E1D8;
+    --paper:#FFFFFF;--canvas:#F3F1EC;--teal:#0F8A7A;--warn:#B4541F;--good:#0F8A7A;
+  }
+  body{font-family:'DM Sans',system-ui,sans-serif;background:var(--canvas);color:var(--ink);
+       padding:28px 16px 72px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto}
+
+  .intro{margin-bottom:22px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+           text-transform:uppercase;color:var(--teal);margin-bottom:9px}
+  h1{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(27px,3.6vw,40px);line-height:1.12;margin-bottom:9px}
+  .sub{font-size:15px;line-height:23px;color:var(--mid);max-width:63ch}
+
+  .sheet{background:var(--paper);border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-top:22px}
+  .sheet-head{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:baseline;
+              padding:17px 20px;border-bottom:1px solid var(--rule)}
+  .sheet-head h2{font-family:'DM Serif Display',Georgia,serif;font-size:19px;font-weight:400}
+  .stamp{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint)}
+
+  .headline{padding:17px 20px;border-bottom:1px solid var(--rule);font-size:15.5px;line-height:24px}
+  .headline b{font-weight:700}
+  .headline .ok{color:var(--good)}
+  .headline .flag{color:var(--warn)}
+
+  .totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));border-bottom:1px solid var(--rule)}
+  .tot{padding:13px 20px;border-right:1px solid var(--rule)}
+  .tot:last-child{border-right:0}
+  .tot span{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+  .tot b{font-family:'DM Serif Display',Georgia,serif;font-size:23px;font-weight:400}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+     font-weight:500;padding:11px 20px;border-bottom:1px solid var(--rule);white-space:nowrap}
+  td{padding:14px 20px;border-bottom:1px solid var(--rule);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tr.attention{background:#FDF8F4}
+  .site{font-weight:700}
+  .fmt{display:block;font-size:12px;color:var(--faint);font-weight:400;margin-top:2px}
+  .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .flagline{display:block;font-size:12.5px;line-height:19px;margin-top:3px}
+  .flagline.down{color:var(--warn)}
+  .flagline.up{color:var(--good)}
+  .flagline.flat{color:var(--mid)}
+  .clear{color:var(--faint);font-size:12.5px}
+
+  .note{margin-top:20px;background:#FAF8F3;border:1px solid var(--rule);border-radius:9px;
+        padding:15px 18px;font-size:13.5px;line-height:21px;color:var(--mid)}
+  .note b{color:var(--ink)}
+  .warnbar{background:#FDF4EE;border-bottom:1px solid var(--rule);padding:11px 20px;font-size:13px;color:var(--warn)}
+
+  footer{margin-top:26px;font-size:13px;color:var(--faint);display:flex;flex-wrap:wrap;gap:6px 18px}
+  footer a{color:var(--teal);text-decoration:none;font-weight:500}
+  .loading{padding:44px 20px;text-align:center;color:var(--faint)}
+  @media(max-width:720px){
+    th:nth-child(3),td:nth-child(3),th:nth-child(5),td:nth-child(5){display:none}
+    td,th{padding-left:14px;padding-right:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="intro">
+    <div class="eyebrow">A working demo &middot; Tasti.io</div>
+    <h1>The morning sheet</h1>
+    <p class="sub">
+      Four locations, one page, built from what the point of sale already knows. This is the page a
+      multi-site operator puts together by hand before opening, and the one most of them stop making
+      somewhere around the third site. It loads with sample data so it always works; point it at a
+      Square sandbox and the same page fills from a real API.
+    </p>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="loading">Building the sheet&hellip;</div>
+  </div>
+
+  <div class="note">
+    <b>What you are looking at.</b> Every line is derived, not typed. A site is flagged when it moved
+    against <b>its own</b> normal for this weekday, not against the group, because comparing a
+    ninety-seat room to a food-hall counter tells you nothing. Labour is flagged on its share of
+    sales. Voids are flagged as a rate, so three voids in a four-hundred-order day stay quiet and
+    three in a forty-order day do not.
+  </div>
+
+  <footer>
+    <span>Built by Yuriy Romanyuk</span>
+    <a href="https://www.tasti.io">tasti.io</a>
+    <a href="mailto:yuriy@tasti.io">yuriy@tasti.io</a>
+    <span id="src"></span>
+  </footer>
+</div>
+
+<script type="module">
+const money = (c) => "$" + (c/100).toLocaleString("en-CA",{maximumFractionDigits:0});
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function headline(d){
+  if(!d.needsAttention.length){
+    return `<span class="ok">Nothing needs you this morning.</span> All four sites traded inside their own normal range.`;
+  }
+  const names = d.needsAttention.map((n)=>`<b>${esc(n)}</b>`);
+  const list = names.length===1 ? names[0] : names.slice(0,-1).join(", ")+" and "+names.at(-1);
+  return `<span class="flag">${names.length===1?"One site needs":`${names.length} sites need`} a look:</span> ${list}. Everything else traded inside its own normal range.`;
+}
+
+function render(d){
+  const rows = d.sites.map((s)=>{
+    const flags = s.exceptions.length
+      ? s.exceptions.map((e)=>`<span class="flagline ${e.level}">${esc(e.text)}</span>`).join("")
+      : `<span class="clear">inside its normal range</span>`;
+    return `<tr class="${s.exceptions.some((e)=>e.level==="down")?"attention":""}">
+      <td><span class="site">${esc(s.name)}</span><span class="fmt">${esc(s.format)}</span></td>
+      <td class="num">${money(s.netSales)}</td>
+      <td class="num">${s.orders}</td>
+      <td class="num">${s.labourPct ? s.labourPct.toFixed(1)+"%" : "no shift data"}</td>
+      <td class="num">${esc(s.lastSale)}</td>
+      <td>${flags}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("sheet").innerHTML = `
+    ${d.notice ? `<div class="warnbar">${esc(d.notice)}</div>` : ""}
+    <div class="sheet-head">
+      <h2>${esc(d.group)} &middot; ${esc(d.weekday)}</h2>
+      <span class="stamp">${esc(d.forDate)} &middot; ${esc(d.sourceLabel)}</span>
+    </div>
+    <div class="headline">${headline(d)}</div>
+    <div class="totals">
+      <div class="tot"><span>Net sales</span><b>${money(d.totals.netSales)}</b></div>
+      <div class="tot"><span>Orders</span><b>${d.totals.orders}</b></div>
+      <div class="tot"><span>Average ticket</span><b>${money(Math.round(d.totals.avgTicket))}</b></div>
+      <div class="tot"><span>Labour</span><b>${d.totals.labourPct.toFixed(1)}%</b></div>
+      <div class="tot"><span>Voids</span><b>${d.totals.voids}</b></div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Site</th><th>Net sales</th><th>Orders</th><th>Labour</th><th>Last sale</th><th>Worth a look</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  document.getElementById("src").textContent = d.source === "square" ? "live from a Square sandbox" : "sample data";
+}
+
+try {
+  const res = await fetch("/api/sheet");
+  if(!res.ok) throw new Error(res.status);
+  render(await res.json());
+} catch (err) {
+  document.getElementById("sheet").innerHTML =
+    `<div class="loading">The sheet could not load just now. <a href="mailto:yuriy@tasti.io">Tell me</a> and I will fix it.</div>`;
+}
+</script>
+</body>
+</html>

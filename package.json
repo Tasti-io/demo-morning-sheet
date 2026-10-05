@@ -1,0 +1,12 @@
+{
+  "name": "tasti-demo-morning-sheet",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Public demo: one morning sheet across four sites, built from POS data.",
+  "scripts": {
+    "seed": "node scripts/seed-square.mjs",
+    "seed:dry": "node scripts/seed-square.mjs --dry-run",
+    "check": "node scripts/selftest.mjs"
+  }
+}
