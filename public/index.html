@@ -57,6 +57,25 @@
   .flagline.flat{color:var(--mid)}
   .clear{color:var(--faint);font-size:12.5px}
 
+  .find{padding:16px 20px;border-bottom:1px solid var(--rule)}
+  .find:last-child{border-bottom:0}
+  .find-top{display:flex;gap:10px 14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+  .find-name{font-weight:700;font-size:15px}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:2px 7px;border-radius:999px;margin-left:8px;white-space:nowrap}
+  .chip.down{background:#FDF0E8;color:var(--warn)}
+  .chip.up{background:#E6F4F1;color:var(--good)}
+  .find-money{font-family:'DM Serif Display',Georgia,serif;font-size:21px;white-space:nowrap}
+  .find-money.down{color:var(--warn)}
+  .find-money.up{color:var(--good)}
+  .find-line{font-size:13.5px;color:var(--mid);margin-top:6px;line-height:21px}
+  .find-line b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .find-ev{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);margin-top:7px;line-height:17px}
+  .menu-lag{margin-top:10px;padding:10px 13px;background:#FAF8F3;border-left:2px solid var(--warn);font-size:13px;line-height:20px;color:var(--mid)}
+  .menu-lag b{color:var(--ink)}
+  .spark{vertical-align:middle;margin-left:9px;color:var(--faint)}
+  .review{padding:13px 20px;background:#FAFAF8;font-size:13px;line-height:20px;color:var(--mid);border-top:1px solid var(--rule)}
+  .review b{color:var(--ink)}
+  .review ul{margin:5px 0 0 16px}
   .note{margin-top:20px;background:#FAF8F3;border:1px solid var(--rule);border-radius:9px;
         padding:15px 18px;font-size:13.5px;line-height:21px;color:var(--mid)}
   .note b{color:var(--ink)}
@@ -66,8 +85,15 @@
   footer a{color:var(--teal);text-decoration:none;font-weight:500}
   .loading{padding:44px 20px;text-align:center;color:var(--faint)}
   @media(max-width:720px){
-    th:nth-child(3),td:nth-child(3),th:nth-child(5),td:nth-child(5){display:none}
+    /* On a phone the sheet keeps the three columns that carry a decision: which
+       site, what it did, and whether it needs you. Orders, labour and last sale
+       are detail, and a table that scrolls sideways gets read by nobody. */
+    th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4),
+    th:nth-child(5),td:nth-child(5){display:none}
     td,th{padding-left:14px;padding-right:14px}
+    .spark{display:none}
+    .find-top{display:block}
+    .find-money{display:block;margin-top:6px}
   }
 </style>
 </head>
@@ -78,10 +104,11 @@
     <div class="eyebrow">A working demo &middot; Tasti.io</div>
     <h1>The morning sheet</h1>
     <p class="sub">
-      Four locations, one page, built from what the point of sale already knows. This is the page a
-      multi-site operator puts together by hand before opening, and the one most of them stop making
-      somewhere around the third site. It loads with sample data so it always works; point it at a
-      Square sandbox and the same page fills from a real API.
+      Four locations on one page, plus the half a point of sale cannot see. The top is built from POS
+      data. The bottom is built from supplier invoices: PDFs and phone photos read into line items,
+      priced per kilogram, and compared against what the same item cost six to sixteen weeks ago.
+      Together they answer the question a dashboard never does, which is whether yesterday actually
+      made any money.
     </p>
   </div>
 
@@ -89,12 +116,26 @@
     <div class="loading">Building the sheet&hellip;</div>
   </div>
 
+  <div class="sheet" id="costs">
+    <div class="loading">Reading the invoices&hellip;</div>
+  </div>
+
   <div class="note">
-    <b>What you are looking at.</b> Every line is derived, not typed. A site is flagged when it moved
+    <b>How the sheet reads.</b> Every line is derived, not typed. A site is flagged when it moved
     against <b>its own</b> normal for this weekday, not against the group, because comparing a
     ninety-seat room to a food-hall counter tells you nothing. Labour is flagged on its share of
     sales. Voids are flagged as a rate, so three voids in a four-hundred-order day stay quiet and
     three in a forty-order day do not.
+  </div>
+
+  <div class="note">
+    <b>Where the model is, and where it is not.</b> A model reads each invoice once, when it arrives,
+    and its only job is transcription: supplier, date, description, pack, quantity, line total,
+    exactly as printed. It is never asked to calculate. Every unit price, every percentage and every
+    dollar on this page is ordinary arithmetic over those line items, which is why the lines are
+    added up and checked against the invoice's own stated total before anything is believed. It also
+    means an open page like this one costs nothing to look at: nothing here calls a model when you
+    load it.
   </div>
 
   <footer>
@@ -107,7 +148,11 @@
 
 <script type="module">
 const money = (c) => "$" + (c/100).toLocaleString("en-CA",{maximumFractionDigits:0});
+const money2 = (c) => "$" + (c/100).toFixed(2);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const day = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("en-CA",{day:"numeric",month:"short",year:"numeric"});
+
+/* ---------- the morning sheet ---------- */
 
 function headline(d){
   if(!d.needsAttention.length){
@@ -118,7 +163,7 @@ function headline(d){
   return `<span class="flag">${names.length===1?"One site needs":`${names.length} sites need`} a look:</span> ${list}. Everything else traded inside its own normal range.`;
 }
 
-function render(d){
+function renderSheet(d){
   const rows = d.sites.map((s)=>{
     const flags = s.exceptions.length
       ? s.exceptions.map((e)=>`<span class="flagline ${e.level}">${esc(e.text)}</span>`).join("")
@@ -156,14 +201,109 @@ function render(d){
   document.getElementById("src").textContent = d.source === "square" ? "live from a Square sandbox" : "sample data";
 }
 
-try {
-  const res = await fetch("/api/sheet");
-  if(!res.ok) throw new Error(res.status);
-  render(await res.json());
-} catch (err) {
-  document.getElementById("sheet").innerHTML =
-    `<div class="loading">The sheet could not load just now. <a href="mailto:yuriy@tasti.io">Tell me</a> and I will fix it.</div>`;
+/* ---------- what the invoices say ---------- */
+
+/* A trend line, not a chart. It is here to show that the claim beside it comes
+   from a run of deliveries rather than from one bad week, so it carries a dot on
+   the latest point and nothing else: no axis, no grid, no numbers to misread. */
+function spark(points, level){
+  if(!points || points.length < 3) return "";
+  const vals = points.map((p)=>p.unitCostCents);
+  const min = Math.min(...vals), max = Math.max(...vals), range = (max-min) || 1;
+  const w = 78, h = 20, pad = 2;
+  const at = (p,i)=>[ (i/(points.length-1))*w, pad + (h-pad*2) - ((p.unitCostCents-min)/range)*(h-pad*2) ];
+  const pts = points.map(at);
+  const line = pts.map(([x,y],i)=>`${i?"L":"M"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+  const area = `${line} L${w},${h} L0,${h} Z`;
+  const [lx,ly] = pts.at(-1);
+  const colour = level === "up" ? "var(--good)" : "var(--warn)";
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="-1 -1 ${w+4} ${h+2}" aria-hidden="true">`+
+         `<path d="${area}" fill="${colour}" opacity=".07"/>`+
+         `<path d="${line}" fill="none" stroke="${colour}" stroke-width="1.3" opacity=".8" stroke-linejoin="round"/>`+
+         `<circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="2.1" fill="${colour}"/></svg>`;
 }
+
+function finding(f, series){
+  const per = (c)=>`${money2(c)}/${esc(f.baseLabel)}`;
+
+  if(f.kind === "spread"){
+    return `<div class="find">
+      <div class="find-top">
+        <span><span class="find-name">${esc(f.label)}</span><span class="chip down">${f.deltaPct.toFixed(1)}% apart</span></span>
+        <span class="find-money down">${money(f.monthlyImpactCents)}<span style="font-size:13px">/mo</span></span>
+      </div>
+      <div class="find-line">Same item, two suppliers, same four weeks.
+        <b>${esc(f.cheap.supplier)} ${per(f.cheap.unitCostCents)}</b>,
+        <b>${esc(f.dear.supplier)} ${per(f.dear.unitCostCents)}</b>.
+        The figure on the right is what the higher price costs you a month at the volume you actually bought from them.</div>
+      <div class="find-ev">volume-weighted per supplier over the last 28 days</div>
+    </div>`;
+  }
+
+  const up = f.level === "up";
+  const ev = f.evidence;
+  const menu = f.menu ? `<div class="menu-lag">
+      <b>${esc(f.menu.item)}</b> has been <b>${money2(f.menu.priceCents)}</b> since ${day(f.menu.priceSetOn)},
+      ${f.menu.daysStale} days. The ${esc(f.label.split(",")[0].toLowerCase())} in one serve now costs
+      <b>${money2(f.menu.costNowCents)}</b> against ${money2(f.menu.costWasCents)}, so
+      <b>${(f.menu.addedCostCents).toFixed(1)}&cent;</b> more per plate before anything else on it moved.</div>` : "";
+
+  return `<div class="find">
+    <div class="find-top">
+      <span><span class="find-name">${esc(f.label)}</span><span class="chip ${up?"up":"down"}">${f.deltaPct>0?"+":""}${f.deltaPct.toFixed(1)}%</span>${spark(series, f.level)}</span>
+      <span class="find-money ${up?"up":"down"}">${money(Math.abs(f.monthlyImpactCents))}<span style="font-size:13px">/mo${up?" back":""}</span></span>
+    </div>
+    <div class="find-line"><b>${per(f.wasCents)}</b> then, <b>${per(f.nowCents)}</b> now, weighted by the quantity actually delivered.
+      ${up?"That is money back at your current volume.":"That is what the difference costs you a month at your current volume."}</div>
+    <div class="find-ev">${esc(ev.from.supplier)} ${esc(ev.from.invoice)} on ${day(ev.from.date)}
+      &rarr; ${esc(ev.to.supplier)} ${esc(ev.to.invoice)} on ${day(ev.to.date)} &middot; ${ev.recentInvoices} deliveries in the last 28 days</div>
+    ${menu}
+  </div>`;
+}
+
+function renderCosts(d){
+  const net = d.totals.monthlyNetCents;
+  const head = d.findings.length
+    ? `${net>=0
+        ? `<span class="flag">${money(Math.abs(net))} a month against you</span>`
+        : `<span class="ok">${money(Math.abs(net))} a month in your favour</span>`},
+       net, comparing the last four weeks with six to sixteen weeks ago.`
+    : `<span class="ok">No cost moved enough to be worth your morning.</span>`;
+
+  const byKind = {};
+  for(const r of d.review) byKind[r.kind] = (byKind[r.kind] ?? 0) + 1;
+  const reviewBits = [];
+  if(byKind["unmatched"]) reviewBits.push(`${byKind["unmatched"]} description we have never seen`);
+  if(byKind["unreadable-pack"]) reviewBits.push(`${byKind["unreadable-pack"]} pack size nobody could read`);
+  if(byKind["does-not-reconcile"]) reviewBits.push(`${byKind["does-not-reconcile"]} invoice whose lines do not add up to its own total`);
+
+  document.getElementById("costs").innerHTML = `
+    <div class="sheet-head">
+      <h2>What the invoices say</h2>
+      <span class="stamp">${d.totals.invoicesRead} invoices &middot; ${d.totals.linesPriced} lines priced &middot; ${esc(d.sourceLabel)}</span>
+    </div>
+    <div class="headline">${head}</div>
+    ${d.findings.map((f)=>finding(f, d.series[f.itemId])).join("")}
+    ${reviewBits.length ? `<div class="review">
+      <b>Held back for a person.</b> ${esc(reviewBits.join(", "))}.
+      These are kept out of the numbers above rather than guessed at, because a price history
+      that quietly absorbed them would be wrong in a way nobody could see.</div>` : ""}`;
+}
+
+/* ---------- load ---------- */
+
+const fail = (id, what) => {
+  document.getElementById(id).innerHTML =
+    `<div class="loading">${what} could not load just now. <a href="mailto:yuriy@tasti.io">Tell me</a> and I will fix it.</div>`;
+};
+
+const [sheet, costs] = await Promise.allSettled([
+  fetch("/api/sheet").then((r)=>r.ok?r.json():Promise.reject(r.status)),
+  fetch("/api/costs").then((r)=>r.ok?r.json():Promise.reject(r.status)),
+]);
+
+if(sheet.status === "fulfilled") renderSheet(sheet.value); else fail("sheet","The sheet");
+if(costs.status === "fulfilled") renderCosts(costs.value); else fail("costs","The invoice read");
 </script>
 </body>
 </html>

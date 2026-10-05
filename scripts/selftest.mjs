@@ -8,6 +8,11 @@
  */
 import { buildSheet, exceptions } from "../lib/shape.js";
 import * as fixtures from "../lib/sources/fixtures.js";
+import { parsePack, unitCost, UnitError } from "../lib/invoices/units.js";
+import { matchItem } from "../lib/invoices/catalog.js";
+import { findMoves, RULES } from "../lib/invoices/drift.js";
+import { toCents } from "../lib/invoices/extract.js";
+import * as invoiceFixtures from "../lib/sources/invoices-fixtures.js";
 
 let failed = 0;
 const check = (name, cond) => {
@@ -62,6 +67,62 @@ const b = JSON.stringify(fixtures.load({ date: new Date("2026-10-07T23:00:00Z") 
 check("same day gives identical numbers", a === b);
 const c = JSON.stringify(fixtures.load({ date: new Date("2026-10-08T09:00:00Z") }).sites);
 check("a different day gives different numbers", a !== c);
+
+console.log("\nunit normalization");
+check("a 25 lb case at $90 prices at $7.94/kg",
+  Math.abs(unitCost({ cases: 1, pack: "25 lb", lineTotalCents: 9000 }).unitCostCents - 793.66) < 0.5);
+check("5 x 2.5 kg is read as 12.5 kg a case",
+  unitCost({ cases: 1, pack: "5 x 2.5 kg", lineTotalCents: 10000 }).baseQuantity === 12.5);
+check("pounds and kilograms land on the same number",
+  Math.abs(unitCost({ cases: 1, pack: "25 lb", lineTotalCents: 9000 }).unitCostCents
+         - unitCost({ cases: 1, pack: "11.33980925 kg", lineTotalCents: 9000 }).unitCostCents) < 0.01);
+check("an unreadable pack throws instead of guessing", (() => {
+  try { unitCost({ cases: 1, pack: "banana box", lineTotalCents: 9000 }); return false; }
+  catch (e) { return e instanceof UnitError; }
+})());
+check("a pack we cannot parse returns null", parsePack("banana box") === null);
+
+console.log("\ncatalog matching");
+check("two suppliers' wording joins to one item",
+  matchItem("MOZZ SHRD WHL MLK 5/2.5KG") === matchItem("Cheese Mozzarella Shredded 25LB"));
+check("an item nobody registered stays unmatched",
+  matchItem("CROISSANT BUTTER PREPROOF 48CT") === null);
+
+console.log("\nprinted money");
+check("thousands separators survive", toCents("1,284.55") === 128455);
+check("a bracketed credit is negative", toCents("(3.50)") === -350);
+
+console.log("\ncost findings");
+const asOf = new Date("2026-10-05T09:00:00Z");
+const { invoices } = invoiceFixtures.load({ asOf });
+const moves = findMoves(invoices, { asOf });
+const kindOf = (id) => moves.findings.filter((f) => f.itemId === id).map((f) => f.kind);
+
+check("the steady riser is reported as a creep", kindOf("mozzarella").includes("creep"));
+check("the riser carries its stale menu price",
+  moves.findings.find((f) => f.itemId === "mozzarella" && f.kind === "creep")?.menu?.item === "Margherita");
+check("the same cut at two suppliers is reported as a spread", kindOf("chicken-thigh").includes("spread"));
+check("the faller is reported, not hidden", kindOf("oat-milk").includes("relief"));
+check("a noisy, trendless item stays quiet", kindOf("avocado").length === 0);
+check("a 35% rise on a tiny spend stays quiet", kindOf("napkins").length === 0);
+check("a flat item stays quiet", kindOf("flour").length === 0);
+check("nothing below the dollar floor is reported",
+  moves.findings.every((f) => Math.abs(f.monthlyImpactCents) >= RULES.minMonthlyImpactCents));
+check("every finding points at a real invoice",
+  moves.findings.every((f) => f.kind === "spread" || (f.evidence?.from?.invoice && f.evidence?.to?.invoice)));
+
+console.log("\nwhat gets held back");
+const kinds = new Set(moves.review.map((r) => r.kind));
+check("an unmatched description goes to review", kinds.has("unmatched"));
+check("an unreadable pack goes to review", kinds.has("unreadable-pack"));
+check("an invoice that does not add up goes to review", kinds.has("does-not-reconcile"));
+check("held-back lines are not priced into the findings",
+  moves.findings.every((f) => f.itemId !== "croissant"));
+
+console.log("\ninvoice determinism");
+check("the same day reads the same both times",
+  JSON.stringify(findMoves(invoiceFixtures.load({ asOf }).invoices, { asOf }).findings)
+  === JSON.stringify(moves.findings));
 
 console.log(failed ? `\n${failed} failure(s)` : "\nall passed");
 process.exit(failed ? 1 : 0);
