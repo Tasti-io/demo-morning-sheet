@@ -17,6 +17,7 @@ import { extname, basename } from "node:path";
 import { extractInvoice } from "../lib/invoices/extract.js";
 import { unitCost, UnitError, BASE_LABEL } from "../lib/invoices/units.js";
 import { ingest } from "../lib/invoices/drift.js";
+import { item as catalogItem } from "../lib/invoices/catalog.js";
 
 const TYPES = { ".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif" };
 const args = process.argv.slice(2);
@@ -48,36 +49,64 @@ try {
   }
 
   console.log(`\n${invoice.supplier}   ${invoice.date}   invoice ${invoice.id}`);
-  console.log("-".repeat(78));
+  console.log("-".repeat(86));
   for (const l of invoice.lines) {
-    let unit = "";
-    try {
-      const u = unitCost(l);
-      unit = `${money(Math.round(u.unitCostCents))}/${BASE_LABEL[u.base]}`;
-    } catch (err) {
-      unit = err instanceof UnitError ? "pack unreadable" : (() => { throw err; })();
+    const catalogPack = l.itemId ? catalogItem(l.itemId)?.defaultPack : null;
+    const pack = l.pack || catalogPack;
+    let unit;
+    if (!pack) {
+      unit = "no pack printed";
+    } else {
+      try {
+        const u = unitCost({ ...l, pack });
+        unit = `${money(Math.round(u.unitCostCents))}/${BASE_LABEL[u.base]}${l.pack ? "" : " *"}`;
+      } catch (err) {
+        if (!(err instanceof UnitError)) throw err;
+        unit = "pack unreadable";
+      }
     }
     console.log(
-      `${(l.description ?? "").slice(0, 38).padEnd(39)}` +
-      `${String(l.pack ?? "").slice(0, 12).padEnd(13)}` +
+      `${String(l.code ?? "").slice(0, 9).padEnd(10)}` +
+      `${(l.description ?? "").slice(0, 34).padEnd(35)}` +
+      `${String(pack ?? "").slice(0, 11).padEnd(12)}` +
       `${String(l.cases).padStart(4)}  ` +
       `${money(l.lineTotalCents).padStart(10)}  ` +
-      `${unit.padStart(14)}`,
+      `${unit.padStart(15)}`,
     );
   }
-  console.log("-".repeat(78));
+  console.log("-".repeat(86));
+  if (invoice.lines.some((l) => !l.pack && l.itemId && catalogItem(l.itemId)?.defaultPack)) {
+    console.log("* pack size came from the catalog, not from this document");
+  }
 
   const { review } = ingest([invoice]);
   const bad = review.find((r) => r.kind === "does-not-reconcile");
+  const basis = invoice.subtotalCents != null ? "subtotal" : "total";
+  const stated = invoice.subtotalCents ?? invoice.totalCents;
   console.log(
     bad
-      ? `lines ${money(bad.linesCents)} vs stated total ${money(bad.statedCents)}  <- does not reconcile, check before trusting`
-      : `lines add up to the stated total ${money(invoice.totalCents)}`,
+      ? `product lines ${money(bad.linesCents)} vs stated ${bad.basis} ${money(bad.statedCents)}  <- does not reconcile, check before trusting`
+      : `product lines add up to the stated ${basis} ${money(stated)}`,
   );
+  // Only worth a line when the two actually differ; on a receipt with no freight
+  // or tax they are the same number and saying so twice is noise.
+  if (invoice.totalCents != null && stated != null && invoice.totalCents !== stated) {
+    console.log(`invoice total ${money(invoice.totalCents)}, the difference being freight, deposits and tax, which are not tracked as items`);
+  }
+
+  const noPack = review.filter((r) => r.kind === "no-pack-printed");
+  if (noPack.length) {
+    console.log(`\n${noPack.length} line(s) matched an item but printed no pack size, so they carry no price per unit yet.`);
+    console.log(`Weigh the package once and add defaultPack to that entry in lib/invoices/catalog.js:`);
+    for (const r of [...new Map(noPack.map((r) => [r.itemId, r])).values()]) {
+      console.log(`  ${r.itemId}: defaultPack: "1.5 kg"   (${r.code ?? "no code"}  ${r.description})`);
+    }
+  }
 
   if (unmatched.length) {
-    console.log(`\n${unmatched.length} description(s) not in the catalog yet. Add an alias in lib/invoices/catalog.js:`);
-    for (const d of unmatched) console.log(`  ${d}`);
+    const once = [...new Set(unmatched)];
+    console.log(`\n${once.length} description(s) not in the catalog yet. Add an alias, or better the item code, in lib/invoices/catalog.js:`);
+    for (const d of once) console.log(`  ${d}`);
   }
   if (usage) console.error(`\n(${usage.input_tokens} in / ${usage.output_tokens} out)`);
 } catch (err) {

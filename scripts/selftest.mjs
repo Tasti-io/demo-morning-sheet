@@ -10,7 +10,7 @@ import { buildSheet, exceptions } from "../lib/shape.js";
 import * as fixtures from "../lib/sources/fixtures.js";
 import { parsePack, unitCost, UnitError } from "../lib/invoices/units.js";
 import { matchItem } from "../lib/invoices/catalog.js";
-import { findMoves, RULES } from "../lib/invoices/drift.js";
+import { findMoves, ingest, RULES } from "../lib/invoices/drift.js";
 import { toCents } from "../lib/invoices/extract.js";
 import * as invoiceFixtures from "../lib/sources/invoices-fixtures.js";
 
@@ -110,6 +110,18 @@ check("nothing below the dollar floor is reported",
   moves.findings.every((f) => Math.abs(f.monthlyImpactCents) >= RULES.minMonthlyImpactCents));
 check("every finding points at a real invoice",
   moves.findings.every((f) => f.kind === "spread" || (f.evidence?.from?.invoice && f.evidence?.to?.invoice)));
+
+console.log("\nreconciliation");
+const goods = [{ description: "MOZZ SHRD WHL MLK", pack: "5 x 2.5 kg", cases: 4, lineTotalCents: 46200 }];
+check("freight and tax do not trigger a false alarm",
+  ingest([{ id: "T1", supplier: "T", date: "2026-09-28", lines: goods, subtotalCents: 46200, totalCents: 48050 }])
+    .review.filter((r) => r.kind === "does-not-reconcile").length === 0);
+check("a subtotal that really disagrees is still caught",
+  ingest([{ id: "T2", supplier: "T", date: "2026-09-28", lines: goods, subtotalCents: 50000, totalCents: 52000 }])
+    .review.some((r) => r.kind === "does-not-reconcile" && r.basis === "subtotal"));
+check("an invoice with no printed subtotal falls back to its total",
+  ingest([{ id: "T3", supplier: "T", date: "2026-09-28", lines: goods, totalCents: 50000 }])
+    .review.some((r) => r.kind === "does-not-reconcile" && r.basis === "total"));
 
 console.log("\nwhat gets held back");
 const kinds = new Set(moves.review.map((r) => r.kind));
