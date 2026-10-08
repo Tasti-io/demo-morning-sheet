@@ -6,6 +6,9 @@
     },
     "api/costs.js": {
       "maxDuration": 15
+    },
+    "api/tomorrow.js": {
+      "maxDuration": 15
     }
   },
   "headers": [

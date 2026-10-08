@@ -6,6 +6,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import sheetHandler from "../api/sheet.js";
 import costsHandler from "../api/costs.js";
+import tomorrowHandler from "../api/tomorrow.js";
 
 import { fileURLToPath } from "node:url";
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -13,7 +14,7 @@ const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", "
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
-  const api = { "/api/sheet": sheetHandler, "/api/costs": costsHandler }[url.pathname];
+  const api = { "/api/sheet": sheetHandler, "/api/costs": costsHandler, "/api/tomorrow": tomorrowHandler }[url.pathname];
   if (api) {
     const shim = {
       setHeader: (k, v) => res.setHeader(k, v),

@@ -103,6 +103,66 @@
   .note b{color:var(--ink)}
   .warnbar{background:#FDF4EE;border-bottom:1px solid var(--rule);padding:11px 20px;font-size:13px;color:var(--warn)}
 
+
+  /* ---------- tomorrow ---------- */
+  .days{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
+  .day{appearance:none;border:1px solid var(--rule);background:var(--paper);border-radius:999px;font:inherit;
+       font-size:13px;color:var(--mid);padding:6px 12px;cursor:pointer;white-space:nowrap}
+  .day:hover{color:var(--ink);border-color:var(--faint)}
+  .day.is-on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .day .tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;margin-left:6px;opacity:.75}
+  .day:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .ctx{display:flex;flex-wrap:wrap;gap:6px 16px;padding:13px 20px;border-bottom:1px solid var(--rule);font-size:13.5px;color:var(--mid)}
+  .ctx b{color:var(--ink)}
+  .bar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--rule);background:#FAFAF8}
+  .btn{appearance:none;border:1px solid var(--teal);background:var(--teal);color:#fff;font:inherit;font-size:13.5px;font-weight:500;
+       padding:7px 14px;border-radius:7px;cursor:pointer;white-space:nowrap}
+  .btn:hover{filter:brightness(1.07)}
+  .btn.ghost{background:var(--paper);color:var(--teal)}
+  .btn:disabled{opacity:.55;cursor:default;filter:none}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .meter{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint);letter-spacing:.04em}
+  .site-head{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between;align-items:baseline;padding:16px 20px 4px}
+  .site-head h3{font-family:'DM Serif Display',Georgia,serif;font-size:19px;font-weight:400}
+  .fc{padding:2px 20px 10px;font-size:14px;line-height:22px;color:var(--mid)}
+  .fc b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .adj{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 10px}
+  .pill{font-size:12px;line-height:17px;padding:3px 9px;border-radius:999px;background:#F3F1EC;color:var(--mid)}
+  .pill b{color:var(--ink);font-weight:500}
+  .pill.up b{color:var(--good)} .pill.down b{color:var(--warn)}
+  .chart{padding:4px 20px 6px}
+  .chart svg{width:100%;height:92px;display:block}
+  .legend{font-size:11.5px;color:var(--faint);padding:0 20px 12px;line-height:17px}
+  .legend i{display:inline-block;width:14px;height:0;border-top:2px dashed var(--faint);vertical-align:middle;margin:0 4px 0 2px}
+  .legend i.solid{border-top:2px solid var(--teal)}
+  .legend i.box{width:9px;height:9px;border:0;background:#D9E9E6;vertical-align:-1px}
+  .chg{display:grid;grid-template-columns:1fr auto;gap:6px 16px;padding:13px 20px;border-top:1px solid var(--rule)}
+  .chg.off{background:#FBF9F5}
+  .chg.off .chg-what,.chg.off .chg-why{opacity:.5;text-decoration:line-through;text-decoration-thickness:1px}
+  .chg-what{font-size:14.5px;line-height:21px}
+  .chg-what b{font-weight:700}
+  .kind{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-right:7px;vertical-align:1px}
+  .kind.add{background:#E6F4F1;color:var(--good)} .kind.cut{background:#FDF0E8;color:var(--warn)}
+  .chg-why{grid-column:1/-1;font-size:13px;line-height:20px;color:var(--mid)}
+  .chg-ctl{display:flex;gap:6px;align-items:flex-start}
+  .mini{appearance:none;border:1px solid var(--rule);background:var(--paper);font:inherit;font-size:12.5px;color:var(--mid);
+        padding:4px 10px;border-radius:6px;cursor:pointer}
+  .mini:hover{color:var(--ink);border-color:var(--faint)}
+  .mini:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+  .why-sel{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--mid)}
+  .why-sel select{font:inherit;font-size:12.5px;padding:3px 6px;border:1px solid var(--rule);border-radius:6px;background:var(--paper)}
+  .gapnote,.statnote,.emptynote{padding:11px 20px;border-top:1px solid var(--rule);font-size:13px;line-height:20px;color:var(--mid);background:#FAF8F3}
+  .gapnote b,.statnote b,.emptynote b{color:var(--ink)}
+  .site-foot{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;align-items:center;padding:13px 20px;border-top:1px solid var(--rule)}
+  .nums{font-size:13px;color:var(--mid);font-variant-numeric:tabular-nums}
+  .nums b{color:var(--ink)}
+  .done{font-size:13px;color:var(--good)}
+  details.rota{border-top:1px solid var(--rule)}
+  details.rota summary{padding:11px 20px;font-size:13px;color:var(--teal);cursor:pointer;font-weight:500}
+  details.rota table{font-size:13px}
+  details.rota td,details.rota th{padding:8px 20px}
+  .tagx{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-left:6px}
+  .nobody{color:var(--faint);padding:13px 20px;border-top:1px solid var(--rule);font-size:13.5px}
   footer{margin-top:26px;font-size:13px;color:var(--faint);display:flex;flex-wrap:wrap;gap:6px 18px}
   footer a{color:var(--teal);text-decoration:none;font-weight:500}
   .loading{padding:44px 20px;text-align:center;color:var(--faint)}
@@ -116,6 +176,8 @@
     .spark{display:none}
     .find-top{display:block}
     .find-money{display:block;margin-top:6px}
+    details.rota th:nth-child(4),details.rota td:nth-child(4){display:none}
+    .chg{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -130,12 +192,14 @@
       data. The bottom is built from supplier invoices: PDFs and phone photos read into line items,
       priced per kilogram, and compared against what the same item cost six to sixteen weeks ago.
       Together they answer the question a dashboard never does, which is whether yesterday actually
-      made any money.
+      made any money. The <b>Tomorrow</b> tab turns the other way: it forecasts tomorrow, proposes the
+      rota that fits it, and waits for a manager to approve or change it.
     </p>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Sections">
     <button class="tab is-on" role="tab" id="tab-sheet" aria-controls="panel-sheet" aria-selected="true">The sheet</button>
+    <button class="tab" role="tab" id="tab-tomorrow" aria-controls="panel-tomorrow" aria-selected="false" tabindex="-1">Tomorrow</button>
     <button class="tab" role="tab" id="tab-how" aria-controls="panel-how" aria-selected="false" tabindex="-1">How it works</button>
   </div>
 
@@ -151,6 +215,19 @@
     <p class="aside">
       The numbers are invented and the group is fictional. The machinery that produces them is not.
       <button class="linkish" id="go-how">How this works</button>
+    </p>
+  </div>
+
+  <div id="panel-tomorrow" role="tabpanel" aria-labelledby="tab-tomorrow" hidden>
+    <div class="days" id="days" role="group" aria-label="Day to plan"></div>
+    <div class="sheet" id="tomorrow">
+      <div class="loading">Forecasting tomorrow&hellip;</div>
+    </div>
+    <div id="tomorrow-sites"></div>
+    <p class="aside">
+      The weather is real and the calendar is British Columbia's. The group, its trade and the effect of
+      weather on it are invented, and every assumption is labelled where it is used.
+      <button class="linkish" id="go-how-2">How the forecast works</button>
     </p>
   </div>
 
@@ -224,6 +301,75 @@
         Nothing is reported unless it is worth about $150 a month or more. A 35% rise on an item you
         spend $15 a month on is arithmetically true and operationally useless, and a page that prints
         it is a page that stops being read by the second week.
+      </p>
+
+      <h2>What the Tomorrow tab does</h2>
+      <p>
+        The sheet and the invoices look back. The Tomorrow tab looks forward. For each room, half hour
+        by half hour, it forecasts tomorrow's orders, sets them against what the usual rota for that
+        weekday can carry, and proposes the <b>smallest set of changes</b> that moves people toward the
+        hours that need them. A manager approves each change or keeps the usual shift.
+      </p>
+
+      <h2>Where the forecast comes from</h2>
+      <p>
+        The starting point is plain: for every half hour, the median of the last four ordinary same
+        weekdays. Statutory holidays are left out, so Labour Day does not teach it what a normal Monday
+        looks like. On top of that come adjustments for the BC calendar, the long weekends and the
+        holidays themselves, and for the weather.
+      </p>
+      <p>
+        <b>The weather is real.</b> It comes from Open-Meteo, for Vancouver, for the day you are looking
+        at. <b>What the weather does to each room is an assumption</b>, because Harbour &amp; Co is
+        fictional, and every assumption is labelled where it is used. On your own POS history those
+        effects are measured instead: how much a wet Friday actually moved each of your rooms last year.
+        This page never quotes an accuracy figure, because on invented history there is nothing honest to
+        measure one against.
+      </p>
+
+      <h2>Why it starts from your rota</h2>
+      <p>
+        A planner that built a rota from nothing would be easier to write and harder to trust, because
+        every line would need checking. This one starts from the rota a manager would copy forward anyway,
+        so only the differences need reading, and each comes with a named person and a reason in plain
+        words. What it assumes about productivity is learned from that same rota. So it never says
+        "you need 3.4 servers". It says your own Friday puts six servers on at 14:00, and the rush
+        starts at 17:30.
+      </p>
+
+      <h2>The rules it will not break</h2>
+      <p>
+        These are British Columbia's, from the Employment Standards Act, and they are the part a planner
+        built for the United States does not know.
+      </p>
+      <p>
+        <b>No shift past 8 paid hours</b> (s.40), because the time over costs 1.5 times. Where the usual
+        rota already does that, it says so with the cost, and leaves the fix to the manager.
+        <b>A meal break after 5 hours</b> (s.32), treated as unpaid on the assumption the person is free to
+        leave. <b>At least 2 paid hours</b> for anyone called in (s.34); in practice it never adds a shift
+        shorter than three. <b>On a statutory holiday</b>, 1.5 times plus an average day's pay (s.46), so it
+        wants a much bigger rush before it adds anyone, and the people who are off are still owed an average
+        day's pay (s.45), which it shows separately because no rota can change it. Managers sit outside the
+        overtime rules (Employment Standards Regulation s.34(f)).
+      </p>
+      <p>
+        It also refuses two things on its own account. <b>One shift per person per day</b>, across the whole
+        group. And <b>it never invents a person</b>: if a rota calls for more people than a room employs,
+        or a rush needs someone who is already working, it says so instead of filling the line with a name
+        that does not exist.
+      </p>
+
+      <h2>Approve, or keep the usual shift</h2>
+      <p>
+        Each change can be approved or overridden, with a reason. The reason matters more than the click:
+        in a live build it is stored with the change, so a pattern of overrides becomes a correction to the
+        forecast rather than a running argument with it. Approving here sends nothing. In a live build the
+        approved rota goes to the scheduling tool already in use, 7shifts or Square Team, and the people
+        whose shifts moved get a message.
+      </p>
+      <p>
+        Like the rest of this page, the Tomorrow tab calls no model. The forecast and the rota are
+        arithmetic you can check, and opening the page costs nothing however many people do.
       </p>
 
       <h2>On your own numbers</h2>
@@ -398,6 +544,185 @@ function renderCosts(d){
       that quietly absorbed them would be wrong in a way nobody could see.</div>` : ""}`;
 }
 
+/* ---------- tomorrow ---------- */
+
+const hhmm = (m) => `${String(Math.floor(m/60)).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`;
+const hrs = (min) => (Math.round(min/6)/10).toFixed(1).replace(/\.0$/,"");
+const ROLE = {server:"server",host:"host",runner:"runner",bartender:"bartender",barista:"barista",cook:"line cook",
+              "sous-chef":"sous chef",prep:"prep cook",dish:"dishwasher",manager:"general manager"};
+const roleN = (r, n) => `${ROLE[r]}${n===1?"":"s"}`;
+const dayShort = (iso) => new Date(iso+"T12:00:00").toLocaleDateString("en-CA",{weekday:"short",day:"numeric",month:"short"});
+const dayLong = (iso) => new Date(iso+"T12:00:00").toLocaleDateString("en-CA",{weekday:"long",day:"numeric",month:"long"});
+const signed = (x, d=0) => `${x>0?"+":x<0?"−":""}${Math.abs(x).toFixed(d)}`;
+
+/* Per-viewer conveniences only. Wrapped, because storage can be blocked or empty
+   in a private window, and the page has to work the same without it. */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} },
+};
+const weekKey = () => { const d = new Date(); const j = new Date(d.getFullYear(),0,1); return `tasti-overrides-${d.getFullYear()}-${Math.ceil(((d-j)/864e5 + j.getDay() + 1)/7)}`; };
+
+const T = { data:null, date:null, off:{}, approved:{} };
+
+/* The chart: orders an hour as bars, and what the people on the floor can carry as
+   two lines, the usual rota dashed and the proposal solid. The gap between bars and
+   the dashed line is the whole argument, so nothing else is drawn. */
+function chart(points){
+  const w = 600, h = 88, n = points.length, bw = w / n;
+  const max = Math.max(1, ...points.flatMap((p)=>[p.orders, p.before, p.after])) * 1.08;
+  const y = (v) => (h - (v/max)*(h-4)).toFixed(1);
+  const bars = points.map((p,i)=>`<rect x="${(i*bw+1).toFixed(1)}" y="${y(p.orders)}" width="${(bw-2).toFixed(1)}" height="${(h-y(p.orders)).toFixed(1)}" rx="1.5" fill="#D9E9E6"/>`).join("");
+  const step = (key) => points.map((p,i)=>`${i?"L":"M"}${(i*bw).toFixed(1)},${y(p[key])} L${((i+1)*bw).toFixed(1)},${y(p[key])}`).join(" ");
+  const ticks = points.map((p,i)=> p.t % 120 === 0 ? `<text x="${(i*bw+2).toFixed(1)}" y="${h+11}" font-size="9.5" fill="#8A857D" font-family="IBM Plex Mono, monospace">${hhmm(p.t)}</text>` : "").join("");
+  return `<svg viewBox="0 0 ${w} ${h+14}" preserveAspectRatio="none" role="img" aria-label="Forecast orders an hour against staffing">${bars}
+    <path d="${step("before")}" fill="none" stroke="#8A857D" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <path d="${step("after")}" fill="none" stroke="#0F8A7A" stroke-width="2"/>${ticks}</svg>`;
+}
+
+const KIND = { add:["add","Add"], later:["cut","Start later"], earlier:["cut","Finish earlier"], drop:["cut","Stand down"] };
+function changeLine(c){
+  const [cls, label] = KIND[c.type];
+  const what = c.type === "add"
+    ? `<b>${esc(c.who)}</b>, ${esc(ROLE[c.role])}${c.borrowed?` (usually at ${esc(c.borrowed)})`:""}, ${hhmm(c.to.start)} to ${hhmm(c.to.end)}`
+    : c.type === "drop"
+      ? `<b>${esc(c.who)}</b>, ${esc(ROLE[c.role])}: off for the ${hhmm(c.from.start)} to ${hhmm(c.from.end)} shift`
+      : `<b>${esc(c.who)}</b>, ${esc(ROLE[c.role])}: ${hhmm(c.from.start)} to ${hhmm(c.from.end)} becomes ${hhmm(c.to.start)} to ${hhmm(c.to.end)}`;
+  const off = T.off[c.id];
+  return `<div class="chg ${off?"off":""}" data-id="${esc(c.id)}">
+    <div class="chg-what"><span class="kind ${cls}">${label}</span>${what} <span class="tagx">${signed(c.deltaMin/60,1)} h</span></div>
+    <div class="chg-ctl">${off ? `<button class="mini" data-act="undo">Undo</button>` : `<button class="mini" data-act="change">Change</button>`}</div>
+    <div class="chg-why">${esc(c.reason)}</div>
+    ${off ? `<div class="why-sel"><span>Kept the usual shift because</span>
+      <select data-act="why" aria-label="Reason for the change">
+        ${["I know something the forecast does not","an event nearby","we are short that day","the person asked","other"].map((o)=>`<option ${off.why===o?"selected":""}>${o}</option>`).join("")}
+      </select><span>In a live build this reason is stored with the change, so a pattern of overrides corrects the forecast instead of fighting it.</span></div>` : ""}
+  </div>`;
+}
+
+/* What the rota adds up to once the manager's overrides are taken back out. */
+function adjusted(site){
+  const back = site.changes.filter((c)=>T.off[c.id]);
+  const min = site.proposed.paidMin - back.reduce((a,c)=>a+c.deltaMin,0);
+  const cents = site.proposed.cents - back.reduce((a,c)=>a+c.deltaCents,0);
+  return { min, cents, pct: site.forecast.salesCents ? cents / site.forecast.salesCents * 100 : 0 };
+}
+
+function siteCard(s, d){
+  const f = s.forecast;
+  const trend = f.rotaOrders ? (f.baselineOrders / f.rotaOrders - 1) * 100 : 0;
+  const pills = [
+    `<span class="pill ${trend>=0?"up":"down"}"><b>${signed(trend)}%</b> last four ordinary ${esc(d.weekday)}s against what this rota is staffed for</span>`,
+    ...f.adjustments.map((a)=>`<span class="pill ${a.factor>=1?"up":"down"}"><b>${signed((a.factor-1)*100)}%</b> ${esc(a.label)}: ${esc(a.why)} (assumed)</span>`),
+  ].join("");
+  const a = adjusted(s);
+  const approved = T.approved[s.id];
+  const empty = s.unfilledUsual.length ? `<div class="emptynote"><b>Every ${esc(d.weekday)} this rota asks for ${s.unfilledUsual.length} shift${s.unfilledUsual.length===1?"":"s"} nobody can work:</b>
+      ${s.unfilledUsual.map((u)=>`a ${esc(ROLE[u.role])} ${hhmm(u.start)} to ${hhmm(u.end)}`).join(", ")}. The room employs fewer of them than the rota calls for, so those go unfilled each week. The plan does not invent people for them.</div>` : "";
+  const rows = s.shifts.map((x)=>`<tr><td>${esc(x.who)}${x.borrowed?`<span class="tagx">from ${esc(x.borrowed)}</span>`:""}${x.origin!=="rota"?`<span class="tagx">${x.origin==="add"?"added":"moved"}</span>`:""}</td>
+      <td>${esc(ROLE[x.role])}</td><td class="num">${hhmm(x.start)} to ${hhmm(x.end)}${x.mealBreak?`<span class="tagx">30 min break</span>`:""}</td><td class="num">${money(x.costCents)}</td></tr>`).join("");
+  return `<div class="sheet" id="site-${esc(s.id)}">
+    <div class="site-head"><h3>${esc(s.name)}</h3><span class="stamp">${esc(s.format)} &middot; open ${esc(s.hours[0])} to ${esc(s.hours[1])}</span></div>
+    <div class="fc">Forecast <b>${f.orders} orders</b>, about <b>${money(f.salesCents)}</b>. The usual ${esc(d.weekday)} rota here is staffed for about <b>${f.rotaOrders}</b>.</div>
+    <div class="adj">${pills}</div>
+    <div class="chart">${chart(s.chart.map((p)=>({ ...p, after: p.before + s.changes.filter((c)=>!T.off[c.id])
+        .flatMap((c)=>c.cap ?? []).filter((w)=>w.from <= p.t && p.t < w.to).reduce((x,w)=>x+w.d,0) })))}</div>
+    <div class="legend"><i class="box"></i> orders an hour, forecast &nbsp; <i></i> what the usual ${esc(roleN(s.lead,2))} can carry &nbsp; <i class="solid"></i> proposed</div>
+    ${s.changes.length ? s.changes.map(changeLine).join("") : `<div class="nobody">The usual ${esc(d.weekday)} rota fits this room tomorrow. Nothing to change.</div>`}
+    ${s.gaps.map((g)=>`<div class="gapnote"><b>Short at the peak.</b> ${esc(g.text)}</div>`).join("")}
+    ${(s.rules ?? []).map((r)=>`<div class="gapnote"><b>Overtime in the usual rota.</b> ${esc(r.text)}</div>`).join("")}
+    ${empty}
+    <div class="site-foot">
+      <span class="nums">Paid hours <b>${hrs(s.usual.paidMin)}</b> &rarr; <b>${hrs(a.min)}</b> &middot; labour <b>${s.usual.pct.toFixed(1)}%</b> &rarr; <b>${a.pct.toFixed(1)}%</b> of forecast sales</span>
+      ${approved ? `<span class="done">Approved at ${esc(approved)}.</span>` : `<button class="btn ghost" data-approve="${esc(s.id)}">Approve ${esc(s.name)}</button>`}
+    </div>
+    <details class="rota"><summary>The full rota for ${esc(s.name)}, ${s.shifts.length} shifts</summary>
+      <table><thead><tr><th>Who</th><th>Role</th><th>Shift</th><th>Cost</th></tr></thead><tbody>${rows}</tbody></table></details>
+  </div>`;
+}
+
+function renderTomorrow(){
+  const d = T.data;
+  document.getElementById("days").innerHTML = d.days.map((iso)=>
+    `<button class="day ${iso===d.date?"is-on":""}" data-day="${iso}" aria-pressed="${iso===d.date}">${esc(dayShort(iso))}${d.dayTags?.[iso]?`<span class="tag">${esc(d.dayTags[iso])}</span>`:""}</button>`
+  ).join("");
+
+  const sites = d.sites, sum = (f)=>sites.reduce((x,s)=>x+f(s),0);
+  const adj = sites.map(adjusted);
+  const usualMin = sum((s)=>s.usual.paidMin), propMin = adj.reduce((x,a)=>x+a.min,0);
+  const usualCents = sum((s)=>s.usual.cents), propCents = adj.reduce((x,a)=>x+a.cents,0);
+  const sales = d.totals.salesCents;
+  const live = sum((s)=>s.changes.filter((c)=>!T.off[c.id]).length);
+  const cal = sites[0].forecast.adjustments.find((a)=>a.kind==="calendar");
+  const w = d.weather;
+  const overrides = store.get(weekKey(), 0);
+  const nApproved = Object.keys(T.approved).length;
+  const saving = usualCents - propCents;
+
+  document.getElementById("tomorrow").innerHTML = `
+    ${d.notice ? `<div class="warnbar">${esc(d.notice)}</div>` : ""}
+    <div class="sheet-head"><h2>Harbour &amp; Co &middot; ${esc(dayLong(d.date))}</h2><span class="stamp">plan made ${esc(d.today)} &middot; sample data</span></div>
+    <div class="ctx">
+      <span>Weather: <b>${w ? `${esc(w.sky)}, ${Math.round(w.tempMaxC)}&deg;C, ${w.precipitationMm.toFixed(1)} mm` : "not available"}</b>${w ? " (Open-Meteo, live)" : ""}</span>
+      <span>Calendar: <b>${cal ? esc(cal.label) : "an ordinary day"}</b></span>
+    </div>
+    <div class="headline">${live
+      ? `<span class="flag">${live} change${live===1?"":"s"} to the usual ${esc(d.weekday)} rota</span> across four rooms, each with its reason below.`
+      : `<span class="ok">The usual ${esc(d.weekday)} rota fits tomorrow.</span> Nothing to change.`}
+      ${saving > 0 ? `Together they save about <b>${money(saving)}</b> in wages.` : saving < 0 ? `Together they add about <b>${money(-saving)}</b> in wages, to cover rushes the rota misses.` : ""}</div>
+    <div class="totals">
+      <div class="tot"><span>Forecast orders</span><b>${d.totals.orders}</b></div>
+      <div class="tot"><span>Forecast sales</span><b>${money(sales)}</b></div>
+      <div class="tot"><span>Paid hours</span><b>${hrs(usualMin)} &rarr; ${hrs(propMin)}</b></div>
+      <div class="tot"><span>Labour of sales</span><b>${(usualCents/sales*100).toFixed(1)}% &rarr; ${(propCents/sales*100).toFixed(1)}%</b></div>
+    </div>
+    ${d.stat ? `<div class="statnote"><b>${esc(d.stat)} is a BC statutory holiday.</b> Staff who work it are paid 1.5 times their wage plus an
+      average day's pay (Employment Standards Act s.46), so about <b>${money(d.totals.statPremiumCents)}</b> of tomorrow's labour is that
+      premium and every added hour costs roughly two and a half times. That is why the planner wants a much bigger rush before it adds
+      anyone today, and takes hours away more readily. Eligible staff who are off are still owed an average day's pay (s.45), roughly
+      <b>${money(d.totals.statOffCents)}</b> across the group, which no rota can change, so it is kept out of the labour figure above.</div>` : ""}
+    <div class="bar">
+      <span class="meter">Overrides this week: ${overrides} &middot; approved ${nApproved} of 4 rooms</span>
+      ${nApproved === 4 ? `<span class="done">All four approved. In a live build the rota now goes to 7shifts or Square Team, and the people whose shifts moved get a message. Here nothing is sent.</span>`
+        : `<button class="btn" id="approve-all">Approve all four rooms</button>`}
+    </div>`;
+  document.getElementById("tomorrow-sites").innerHTML = sites.map((s)=>siteCard(s, d)).join("");
+}
+
+async function loadTomorrow(date){
+  const box = document.getElementById("tomorrow");
+  if (!T.data) box.innerHTML = `<div class="loading">Forecasting tomorrow&hellip;</div>`;
+  try{
+    const r = await fetch(`/api/tomorrow${date ? `?date=${encodeURIComponent(date)}` : ""}`);
+    if (!r.ok) throw r.status;
+    T.data = await r.json(); T.date = T.data.date; T.off = {}; T.approved = {};
+    renderTomorrow();
+    if (location.hash.startsWith("#tomorrow")) history.replaceState(null, "", `#tomorrow/${T.date}`);
+  }catch{ fail("tomorrow", "The forecast"); document.getElementById("tomorrow-sites").innerHTML = ""; }
+}
+
+const clock = () => new Date().toLocaleTimeString("en-CA",{hour:"2-digit",minute:"2-digit",hour12:false});
+document.getElementById("panel-tomorrow").addEventListener("click", (e) => {
+  const day = e.target.closest("[data-day]");
+  if (day) { loadTomorrow(day.dataset.day); return; }
+  if (e.target.id === "approve-all") { for (const s of T.data.sites) T.approved[s.id] ??= clock(); renderTomorrow(); return; }
+  const ap = e.target.closest("[data-approve]");
+  if (ap) { T.approved[ap.dataset.approve] = clock(); renderTomorrow(); return; }
+  const act = e.target.closest("[data-act]");
+  if (!act || act.dataset.act === "why") return;
+  const id = act.closest(".chg").dataset.id;
+  if (act.dataset.act === "change") { T.off[id] = { why: "I know something the forecast does not" }; store.set(weekKey(), store.get(weekKey(),0) + 1); }
+  else { delete T.off[id]; store.set(weekKey(), Math.max(0, store.get(weekKey(),0) - 1)); }
+  // A change to the plan means whoever approved it has approved something else now.
+  const site = id.split("-")[0]; delete T.approved[site];
+  renderTomorrow();
+});
+document.getElementById("panel-tomorrow").addEventListener("change", (e) => {
+  if (e.target.dataset.act !== "why") return;
+  const id = e.target.closest(".chg").dataset.id;
+  if (T.off[id]) T.off[id].why = e.target.value;
+});
+
 /* ---------- tabs ---------- */
 
 /* Two panels, no router and no framework: the tab is a view toggle, not a page.
@@ -413,6 +738,8 @@ function showTab(id){
     document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
+  if (id === "tab-tomorrow" && !T.data) loadTomorrow(location.hash.split("/")[1]);
+  history.replaceState(null, "", id === "tab-tomorrow" ? `#tomorrow${T.date ? "/" + T.date : ""}` : id === "tab-how" ? "#how" : location.pathname);
 }
 for(const t of tabs) t.addEventListener("click", () => showTab(t.id));
 document.addEventListener("keydown", (e) => {
@@ -422,6 +749,11 @@ document.addEventListener("keydown", (e) => {
   next.focus(); showTab(next.id);
 });
 document.getElementById("go-how").addEventListener("click", () => { showTab("tab-how"); document.getElementById("tab-how").focus(); });
+document.getElementById("go-how-2").addEventListener("click", () => { showTab("tab-how"); document.getElementById("tab-how").focus(); });
+/* Deep links, so a reply to a prospect can point straight at a tab or a day:
+   #tomorrow opens tomorrow, #tomorrow/2026-10-12 opens that day if it is still ahead. */
+if (location.hash.startsWith("#tomorrow")) showTab("tab-tomorrow");
+else if (location.hash === "#how") showTab("tab-how");
 
 /* ---------- load ---------- */
 
