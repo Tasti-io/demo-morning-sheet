@@ -189,6 +189,9 @@ check("the same day plans the same way twice", JSON.stringify(plan("2026-10-09",
 const wet = plan("2026-10-09", { code: 63, tempMaxC: 12, precipitationMm: 9, precipitationChance: 90 });
 const dry = plan("2026-10-09", { code: 0, tempMaxC: 15, precipitationMm: 0, precipitationChance: 0 });
 check("rain lowers the waterfront room and lifts the mall", wet.sites[0].forecast.orders < dry.sites[0].forecast.orders && wet.sites[2].forecast.orders > dry.sites[2].forecast.orders);
+check("drizzle is not rain: 0.7 mm leaves the plan alone", JSON.stringify(plan("2026-10-09", { code: 53, tempMaxC: 13, precipitationMm: 0.7, precipitationChance: 90 }).sites.map((s) => s.forecast))
+  === JSON.stringify(plan("2026-10-09", { code: 3, tempMaxC: 13, precipitationMm: 0, precipitationChance: 10 }).sites.map((s) => s.forecast)));
+check("and a real 5 mm is", plan("2026-10-09", { code: 63, tempMaxC: 13, precipitationMm: 5, precipitationChance: 80 }).sites[0].forecast.adjustments.some((a) => a.key === "rain"));
 check("Thanksgiving carries a holiday premium, an ordinary Tuesday none",
   plan("2026-10-12", null).totals.statPremiumCents > 0 && plan("2026-10-13", null).totals.statPremiumCents === 0);
 
